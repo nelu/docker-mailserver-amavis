@@ -1,6 +1,6 @@
 ARG ARCH
 
-FROM ${ARCH}FROM debian:12
+FROM ${ARCH}debian:12
 LABEL maintainer="Ralph Schuster <github@ralph-schuster.eu>"
 
 #####################################################################
