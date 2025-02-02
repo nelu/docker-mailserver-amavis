@@ -1,4 +1,6 @@
-FROM debian:12
+ARG ARCH
+
+FROM ${ARCH}FROM debian:12
 LABEL maintainer="Ralph Schuster <github@ralph-schuster.eu>"
 
 #####################################################################
@@ -83,7 +85,9 @@ RUN mkdir /usr/local/amavis/templates/amavis
 ADD etc/amavis/  /usr/local/amavis/templates/amavis/
 RUN cd /usr/local/amavis/templates/amavis/ && \
     for file in *; do rm /etc/amavis/conf.d/$file; done
-RUN chmod 777 /var/log
+RUN chmod 777 /var/log \
+    && mv -f /var/lib/clamav /var/lib/clamav_orig \
+    && ln -s /var/lib/clamav_orig /var/lib/clamav
 
 #####################################################################
 #  Image OCI labels
@@ -119,6 +123,7 @@ LABEL org.opencontainers.image.licenses=$ARG_LICENSES
 EXPOSE 10024
 VOLUME /var/virusmails
 WORKDIR /usr/local/amavis
+VOLUME ["/var/lib/clamav", "/var/virusmails"]
 CMD ["/usr/local/amavis/entrypoint.sh"]
 #CMD ["/usr/local/amavis/loop.sh"]
 
