@@ -113,6 +113,11 @@ configure_amavis() {
 	copy_files $TMPL_SRC $DEST_DIR
 }
 
+# populate empty persistent data volumes
+create_persistent_data() {
+	[ -z "$(ls -A /var/lib/clamav)" ] && cp -arfp /var/lib/clamav_orig/. /var/lib/clamav/
+}
+
 # Stopping all (we got a TERM signal at this point)
 _sigterm() {
 	echo "Caught SIGTERM..."
@@ -127,6 +132,9 @@ _sigterm() {
 # Startup procedure
 #########################
 cd $IMAGE_HOME
+
+# bootstrap data
+create_persistent_data
 
 # Configure clamd
 configure_clamd
